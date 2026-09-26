@@ -16,11 +16,11 @@ export interface AskResult {
 }
 
 export const ASK_SUGGESTIONS = [
-  "Is month sabse zyada paise kahan gaye?",
-  "Next 7 din mein kya important hai?",
-  "Kaunse goals late chal rahe hain?",
-  "Kitna udhaar baaki hai?",
-  "Meri study aur workout ka balance kaisa hai?",
+  "Where did I spend the most this month?",
+  "What is important in the next 7 days?",
+  "Which goals are behind schedule?",
+  "How much money is owed?",
+  "How balanced are my study and workouts?",
 ];
 
 export function askLife(qRaw: string, d: AskData): AskResult {
@@ -54,7 +54,7 @@ export function askLife(qRaw: string, d: AskData): AskResult {
   }
 
   // Spending / where money went
-  if (/(sabse zyada|most|kahan|where).*(paise|money|spend|kharch|gaye|gaya)|spending|kharch/.test(q)) {
+  if (/(most|where).*(money|spend)|spending/.test(q)) {
     const monthTxns = d.transactions.filter((t) => t.type === "expense" && dayjs(t.date).isSame(dayjs(), "month"));
     const byCat: Record<string, number> = {};
     monthTxns.forEach((t) => (byCat[t.category] = (byCat[t.category] || 0) + t.amount));
@@ -73,7 +73,7 @@ export function askLife(qRaw: string, d: AskData): AskResult {
   }
 
   // Debts
-  if (/(udhaar|udhar|debt|owe|lene|dene|baaki)/.test(q)) {
+  if (/(debt|owe|loan|owed)/.test(q)) {
     const owed = d.transactions.filter((t) => t.type === "debt_in" && !t.settled);
     const owe = d.transactions.filter((t) => t.type === "debt_out" && !t.settled);
     const owedTotal = owed.reduce((s, t) => s + t.amount, 0);
@@ -95,7 +95,7 @@ export function askLife(qRaw: string, d: AskData): AskResult {
   }
 
   // Upcoming / important next N days
-  if (/(next|agle|upcoming|important|zaroori|kya hai).*(din|day|7|week|hafte)|important|upcoming|next 7/.test(q)) {
+  if (/(next|upcoming|important|what is important).*(day|days|week|7)|important|upcoming|next 7/.test(q)) {
     const cutoff = dayjs().add(7, "day");
     const evs = d.events.filter((e) => dayjs(e.start).isAfter(dayjs().startOf("day")) && dayjs(e.start).isBefore(cutoff));
     const tks = d.tasks.filter((t) => !t.done && t.dueDate && dayjs(t.dueDate).isBefore(cutoff));
@@ -113,7 +113,7 @@ export function askLife(qRaw: string, d: AskData): AskResult {
   }
 
   // Goals late / behind
-  if (/(goal).*(late|behind|peeche)|late chal|behind|goals?/.test(q)) {
+  if (/(goal).*(late|behind)|behind|goals?/.test(q)) {
     const late = d.goals.filter((g) => g.deadline && dayjs(g.deadline).isBefore(dayjs()) && (g.type !== "save" || (g.savedAmount || 0) < (g.targetAmount || 0)));
     const active = d.goals.filter((g) => !late.includes(g));
     return {
@@ -145,7 +145,7 @@ export function askLife(qRaw: string, d: AskData): AskResult {
   }
 
   // Study vs workout balance
-  if (/(study|padhai).*(workout|fitness|gym|balance)|balance/.test(q)) {
+  if (/(study|workout|fitness|gym).*(balance)|balance/.test(q)) {
     const weekWorkouts = d.workouts.filter((w) => dayjs(w.date).isAfter(dayjs().subtract(7, "day"))).length;
     const studyEvents = d.events.filter((e) => e.kind === "study" && dayjs(e.start).isAfter(dayjs().subtract(7, "day"))).length;
     const chapters = d.subjects.reduce((s, sub) => s + sub.chapters.filter((c) => c.done).length, 0);
@@ -165,6 +165,6 @@ export function askLife(qRaw: string, d: AskData): AskResult {
   d.trips.filter((t) => t.destination.toLowerCase().includes(q)).slice(0, 3).forEach((t) => hits.push(`Trip: ${t.destination}`));
   return {
     title: hits.length ? `Results for "${qRaw}"` : "Ask your life",
-    bullets: hits.length ? hits : ["Try: “Is month sabse zyada paise kahan gaye?” or ask about a person, goal, or trip."],
+    bullets: hits.length ? hits : ["Try asking about spending, upcoming tasks, a goal, a person, or a trip."],
   };
 }

@@ -31,8 +31,10 @@ export default function TripsScreen() {
   const [when, setWhen] = useState<string | null>(dayjs().add(7, "day").toISOString());
 
   const submit = () => {
+    const parsedBudget = budget.trim() ? parseFloat(budget) : undefined;
     if (!dest.trim()) { toast("Enter destination", "error"); return; }
-    st.addTrip({ destination: dest, budget: parseFloat(budget) || undefined, startDate: when || undefined });
+    if (parsedBudget !== undefined && (!Number.isFinite(parsedBudget) || parsedBudget < 0)) { toast("Enter a valid budget", "error"); return; }
+    st.addTrip({ destination: dest, budget: parsedBudget, startDate: when || undefined });
     setDest(""); setBudget(""); setAdd(false); toast("Trip created");
   };
 

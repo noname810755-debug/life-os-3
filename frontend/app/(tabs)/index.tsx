@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { Pressable, ScrollView, Text, View } from "react-native";
 
 import { Icon, IconName } from "@/src/components/Icon";
+import { AppLogo } from "@/src/components/AppLogo";
 import { Badge, Card, IconButton, ProgressBar, SectionHeader } from "@/src/components/ui";
 import { Screen } from "@/src/components/ui";
 import { fmtTime, isToday, money, relative } from "@/src/lib/date";
@@ -58,12 +59,12 @@ export default function HomeScreen() {
     const hr = dayjs().hour();
     const greet = hr < 12 ? "Good morning" : hr < 17 ? "Good afternoon" : "Good evening";
     const n = today.tasksToday.length + today.events.length;
-    if (n === 0 && today.overdue.length === 0) return `${greet}! Aaj ka schedule clear hai. Kuch plan karna hai? Bas Command pe bolo.`;
+    if (n === 0 && today.overdue.length === 0) return `${greet}! Your schedule is clear today. Want to plan something? Open Command to get started.`;
     if (today.events.length) parts.push(`${today.events.length} event${today.events.length > 1 ? "s" : ""}`);
     if (today.tasksToday.length) parts.push(`${today.tasksToday.length} task${today.tasksToday.length > 1 ? "s" : ""}`);
     if (today.overdue.length) parts.push(`${today.overdue.length} overdue`);
     let msg = `${greet}! Aaj ${parts.join(", ")} hain.`;
-    if (today.monthExpense) msg += ` Is month ab tak ${money(today.monthExpense)} kharch hue.`;
+    if (today.monthExpense) msg += ` You have spent ${money(today.monthExpense)} this month.`;
     return msg;
   }, [today]);
 
@@ -89,8 +90,9 @@ export default function HomeScreen() {
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + spacing.xxl, gap: spacing.md }}>
         <View style={s.topRow}>
           <View>
+            <AppLogo size={38} showWordmark />
             <Text style={s.hi}>{dayjs().format("dddd, DD MMM")}</Text>
-            <Text style={s.name}>Hi, {store.settings.name} 👋</Text>
+            <Text style={s.name}>Hi, {store.settings.name}</Text>
           </View>
           <View style={s.topActions}>
             <IconButton name="inbox" testID="home-inbox" onPress={() => router.push("/inbox")} />
@@ -125,7 +127,7 @@ export default function HomeScreen() {
             <Card>
               <Text style={{ fontSize: 17, fontWeight: "800", color: colors.onSurface, marginBottom: 6 }}>{"Your Life OS is empty — let's fill it"}</Text>
               <Text style={{ fontSize: 14, color: colors.muted, lineHeight: 20, marginBottom: spacing.md }}>
-                Tap the orange Command button and just type naturally — Hindi, English ya Hinglish. Example: “Kal 7 baje gym aur Rahul se ₹2,000 lene hain”.
+                Use the orange Command button to capture tasks, events, money, trips, and goals in plain English. Example: “Schedule the gym tomorrow at 7 AM and remind me to call Rahul.”
               </Text>
               <Pressable testID="home-try-command" onPress={() => router.push("/command")} style={{ backgroundColor: colors.brandTertiary, borderRadius: radius.md, padding: spacing.md, flexDirection: "row", alignItems: "center", gap: spacing.sm }}>
                 <Icon name="command" size={20} color={colors.onBrandTertiary} />
@@ -164,7 +166,7 @@ export default function HomeScreen() {
                   </View>
                 ))}
                 {today.tasksToday.map((t, i) => (
-                  <Pressable key={t.id} testID={`home-task-${t.id}`} onPress={() => store.toggleTask(t.id)} style={[s.rowItem, (i > 0 || today.events.length) && { borderTopWidth: 1, borderTopColor: colors.divider }]}>
+                  <Pressable key={t.id} testID={`home-task-${t.id}`} onPress={() => store.toggleTask(t.id)} style={[s.rowItem, Boolean(i > 0 || today.events.length > 0) && { borderTopWidth: 1, borderTopColor: colors.divider }]}>
                     <View style={[s.dot, { backgroundColor: colors.surfaceTertiary }]}><Icon name="circle" size={20} color={colors.muted} /></View>
                     <View style={{ flex: 1 }}><Text style={s.itemTitle}>{t.title}</Text><Text style={s.itemSub}>Task due today</Text></View>
                   </Pressable>

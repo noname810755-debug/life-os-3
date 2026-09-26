@@ -94,7 +94,7 @@ export default function PersonScreen() {
         ))}
 
         {data.tasks.length + data.txns.length + data.events.length + data.trips.length === 0 && (
-          <Card><Text style={{ color: colors.muted, textAlign: "center", paddingVertical: spacing.md }}>Nothing linked yet. Use Command like “{person.name} se ₹500 lene hain”.</Text></Card>
+          <Card><Text style={{ color: colors.muted, textAlign: "center", paddingVertical: spacing.md }}>Nothing linked yet. Use Command like “Rahul owes me ₹500”.</Text></Card>
         )}
       </ScrollView>
 

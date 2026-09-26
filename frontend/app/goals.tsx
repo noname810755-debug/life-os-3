@@ -30,14 +30,17 @@ export default function GoalsScreen() {
   const [contribAmt, setContribAmt] = useState("");
 
   const submit = () => {
+    const parsedTarget = parseFloat(target);
     if (!title.trim()) { toast("Enter a goal", "error"); return; }
-    st.addGoal({ title, type, targetAmount: type === "save" ? parseFloat(target) || undefined : undefined, deadline: deadline || undefined });
+    if (type === "save" && (!Number.isFinite(parsedTarget) || parsedTarget <= 0)) { toast("Enter a valid target amount", "error"); return; }
+    st.addGoal({ title, type, targetAmount: type === "save" ? parsedTarget : undefined, deadline: deadline || undefined });
     setTitle(""); setTarget(""); setAdd(false); toast("Goal created");
   };
 
   const contribute = () => {
     const amt = parseFloat(contribAmt);
-    if (contribId && amt > 0) { st.addToGoal(contribId, amt); toast(`Added ${money(amt)}`); }
+    if (!contribId || !Number.isFinite(amt) || amt <= 0) { toast("Enter a valid savings amount", "error"); return; }
+    st.addToGoal(contribId, amt); toast(`Added ${money(amt)}`);
     setContribId(null); setContribAmt("");
   };
 

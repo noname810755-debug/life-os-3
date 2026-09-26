@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import {
-  ActivityIndicator, Modal, Pressable, ScrollView, StyleProp, Text, TextInput,
+  ActivityIndicator, KeyboardAvoidingView as NativeKeyboardAvoidingView, Modal, Platform, Pressable, ScrollView, StyleProp, Text, TextInput,
   TextInputProps, View, ViewStyle,
 } from "react-native";
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
@@ -50,7 +50,7 @@ const useS = makeStyles((c) => ({
 export function Screen({ children, style }: { children: ReactNode; style?: StyleProp<ViewStyle> }) {
   const s = useS();
   const insets = useSafeAreaInsets();
-  return <View style={[s.screen, { paddingTop: insets.top }, style]}>{children}</View>;
+  return <NativeKeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={[s.screen, { paddingTop: insets.top }, style]}>{children}</NativeKeyboardAvoidingView>;
 }
 
 export function Header({ title, subtitle, back, right }: { title: string; subtitle?: string; back?: boolean; right?: ReactNode }) {

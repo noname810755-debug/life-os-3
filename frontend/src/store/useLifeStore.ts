@@ -113,6 +113,7 @@ const defaultSettings: Settings = {
   pin: null,
   waterGoal: 8,
   waterToday: { date: ymd(), count: 0 },
+  notificationsEnabled: false,
 };
 
 export const useLifeStore = create<State>()(
@@ -328,7 +329,7 @@ export const useLifeStore = create<State>()(
         set((s) => {
           const today = ymd();
           const cur = s.settings.waterToday.date === today ? s.settings.waterToday.count : 0;
-          return { settings: { ...s.settings, waterToday: { date: today, count: Math.max(0, cur + n) } } };
+          return { settings: { ...s.settings, waterToday: { date: today, count: Math.min(s.settings.waterGoal, Math.max(0, cur + n)) } } };
         }),
 
       addInbox: (text, suggestedType) =>

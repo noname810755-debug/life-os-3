@@ -1,8 +1,10 @@
+import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Pressable, ScrollView, Switch, Text, TextInput, View } from "react-native";
+import { Linking, Pressable, ScrollView, Switch, Text, TextInput, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { Icon, IconName } from "@/src/components/Icon";
+import { AppLogo } from "@/src/components/AppLogo";
 import { Card, Header, Input, PrimaryButton, Screen, Sheet } from "@/src/components/ui";
 import { useToast } from "@/src/components/Toast";
 import { seedDemo } from "@/src/lib/demo";
@@ -26,6 +28,7 @@ const useS = makeStyles((c) => ({
 export default function ProfileScreen() {
   const s = useS();
   const { colors } = useTheme();
+  const router = useRouter();
   const insets = useSafeAreaInsets();
   const toast = useToast();
   const st = useLifeStore();
@@ -81,7 +84,7 @@ export default function ProfileScreen() {
       <Header title="Profile" subtitle="You & your data" />
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + 100 }}>
         <Pressable style={s.profileCard} testID="profile-name" onPress={() => { setName(st.settings.name); setNameSheet(true); }}>
-          <View style={s.avatar}><Text style={s.avatarText}>{st.settings.name.charAt(0).toUpperCase()}</Text></View>
+          <AppLogo size={60} />
           <View style={{ flex: 1 }}>
             <Text style={s.name}>{st.settings.name}</Text>
             <Text style={s.sub}>{st.people.length} people · {st.tasks.length} tasks · {st.transactions.length} entries</Text>
@@ -113,6 +116,11 @@ export default function ProfileScreen() {
           </View>
         </Card>
 
+        <Text style={s.sectionTitle}>NOTIFICATIONS</Text>
+        <Card style={{ marginHorizontal: spacing.lg }}>
+          <Row icon="bell" label="Notification settings" testID="notification-settings" onPress={() => router.push("/notifications")} />
+        </Card>
+
         <Text style={s.sectionTitle}>DATA</Text>
         <Card style={{ marginHorizontal: spacing.lg }}>
           <Row icon="sparkles" label="Load example data" testID="load-demo" onPress={() => { seedDemo(); toast("Example data loaded — explore the graph!"); }} />
@@ -122,6 +130,15 @@ export default function ProfileScreen() {
           <Row icon="inbox" label="Restore backup" testID="import-data" onPress={() => setDataSheet("import")} />
           <View style={{ height: 1, backgroundColor: colors.divider }} />
           <Row icon="trash" label="Delete all data" testID="delete-data" danger onPress={() => setConfirmDelete(true)} />
+        </Card>
+
+        <Text style={s.sectionTitle}>LEGAL & SUPPORT</Text>
+        <Card style={{ marginHorizontal: spacing.lg }}>
+          <Row icon="shield" label="Privacy Policy" testID="privacy-policy" onPress={() => router.push("/privacy")} />
+          <View style={{ height: 1, backgroundColor: colors.divider }} />
+          <Row icon="list" label="Terms of Use" testID="terms-of-use" onPress={() => router.push("/terms")} />
+          <View style={{ height: 1, backgroundColor: colors.divider }} />
+          <Row icon="inbox" label="Email support" testID="email-support" onPress={() => Linking.openURL("mailto:jarvisai9077@gmail.com")} />
         </Card>
 
         <Text style={{ textAlign: "center", color: colors.muted, fontSize: 12, marginTop: spacing.xl }}>Life OS · offline-first · v1.0</Text>

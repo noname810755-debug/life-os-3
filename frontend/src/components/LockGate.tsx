@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View } from "react-native";
 
-import { Icon } from "@/src/components/Icon";
+import { AppLogo } from "@/src/components/AppLogo";
 import { useLifeStore } from "@/src/store/useLifeStore";
 import { makeStyles, spacing, useTheme } from "@/src/theme";
 import { Text } from "react-native";
@@ -19,7 +19,6 @@ const useS = makeStyles((c) => ({
 
 export function LockGate({ children }: { children: React.ReactNode }) {
   const s = useS();
-  const { colors } = useTheme();
   const pinEnabled = useLifeStore((st) => st.settings.pinEnabled);
   const pin = useLifeStore((st) => st.settings.pin);
   const hydrated = useLifeStore((st) => st.hydrated);
@@ -44,7 +43,7 @@ export function LockGate({ children }: { children: React.ReactNode }) {
       {children}
       {locked && (
         <View style={s.overlay}>
-          <View style={s.logo}><Icon name="lock" size={34} color={colors.onBrandPrimary} /></View>
+          <AppLogo size={72} />
           <Text style={s.title}>Life OS locked</Text>
           <Text style={s.sub}>Enter your PIN to continue</Text>
           <TextInput testID="lock-pin-input" value={entry} onChangeText={onChange} keyboardType="number-pad" secureTextEntry style={s.input} autoFocus maxLength={4} />

@@ -36,8 +36,10 @@ export default function FitnessScreen() {
   const weekCount = st.workouts.filter((w) => dayjs(w.date).isAfter(dayjs().subtract(7, "day"))).length;
 
   const submit = () => {
+    const parsedMinutes = minutes.trim() ? parseFloat(minutes) : undefined;
     if (!title.trim()) { toast("Enter workout", "error"); return; }
-    st.addWorkout({ title, minutes: parseFloat(minutes) || undefined, type });
+    if (parsedMinutes !== undefined && (!Number.isFinite(parsedMinutes) || parsedMinutes <= 0)) { toast("Enter valid minutes", "error"); return; }
+    st.addWorkout({ title, minutes: parsedMinutes, type });
     setTitle(""); setMinutes(""); setAdd(false); toast("Workout logged");
   };
 

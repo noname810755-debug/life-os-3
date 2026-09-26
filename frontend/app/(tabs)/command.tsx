@@ -42,7 +42,7 @@ export default function CommandScreen() {
     setText(value);
     setDrafts(result);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light).catch(() => {});
-    if (result.length === 0) toast("Samajh nahi aaya — thoda aur detail do", "error");
+    if (result.length === 0) toast("I could not understand that. Add a little more detail.", "error");
   };
 
   const toggle = (id: string) => setDrafts((d) => d.map((a) => (a.id === id ? { ...a, include: !a.include } : a)));
@@ -61,14 +61,14 @@ export default function CommandScreen() {
 
   return (
     <Screen>
-      <Header title="Command" subtitle="Bolo, aur ho jayega" />
+      <Header title="Command" subtitle="Describe it, and Life OS will organize it" />
       <ScrollView keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false} contentContainerStyle={{ paddingBottom: insets.bottom + 120 }}>
         <View style={s.inputWrap}>
           <TextInput
             testID="command-input"
             value={text}
             onChangeText={setText}
-            placeholder="e.g. Kal 7 baje gym, Rahul se ₹2,000 lene hain aur Sunday Jaipur trip ₹6,000 mein plan kar"
+            placeholder="e.g. Schedule the gym tomorrow at 7 AM, remind me to call Rahul, and plan a Jaipur trip for ₹6,000"
             placeholderTextColor={colors.muted}
             style={s.input}
             multiline
